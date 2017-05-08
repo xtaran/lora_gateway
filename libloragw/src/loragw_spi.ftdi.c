@@ -14,7 +14,8 @@ Description:
 	Could be used with multiple SPI ports in parallel (explicit file descriptor)
 
 License: Revised BSD License, see LICENSE.TXT file include in the project
-Maintainer: Sylvain Miermont
+Maintainer: Sylvain Miermont [support for ftdi was dropped from version 4.0.0 and onwards]
+Maintainer: Ruud Vlaming
 */
 
 
@@ -112,9 +113,10 @@ int lgw_spi_close(void *spi_target) {
 
 /* Simple write */
 /* transaction time: .6 to 1 ms typically */
-int lgw_spi_w(void *spi_target, uint8_t address, uint8_t data) {
+int lgw_spi_w(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target, uint8_t address, uint8_t data) {
 	struct mpsse_context *mpsse = spi_target;
-	uint8_t out_buf[2];
+	uint8_t out_buf[3];
+    uint8_t command_size;
 	int a, b, c;
 	
 	/* check input variables */
@@ -123,13 +125,21 @@ int lgw_spi_w(void *spi_target, uint8_t address, uint8_t data) {
 		DEBUG_MSG("WARNING: SPI address > 127\n");
 	}
 	
-	/* prepare frame to be sent */
-	out_buf[0] = WRITE_ACCESS | (address & 0x7F);
-	out_buf[1] = data;
+    /* prepare frame to be sent */
+    if (spi_mux_mode == LGW_SPI_MUX_MODE1) {
+        out_buf[0] = spi_mux_target;
+        out_buf[1] = WRITE_ACCESS | (address & 0x7F);
+        out_buf[2] = data;
+        command_size = 3;
+    } else {
+        out_buf[0] = WRITE_ACCESS | (address & 0x7F);
+        out_buf[1] = data;
+        command_size = 2;
+    }
 	
 	/* MPSSE transaction */
 	a = Start(mpsse);
-	b = FastWrite(mpsse, (char *)out_buf, 2);
+	b = FastWrite(mpsse, (char *)out_buf, command_size);
 	c = Stop(mpsse);
 	
 	/* determine return code */
@@ -146,9 +156,10 @@ int lgw_spi_w(void *spi_target, uint8_t address, uint8_t data) {
 
 /* Simple read (using Transfer function) */
 /* transaction time: 1.1 to 2 ms typically */
-int lgw_spi_r(void *spi_target, uint8_t address, uint8_t *data) {
+int lgw_spi_r(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target, uint8_t address, uint8_t *data) {
 	struct mpsse_context *mpsse = spi_target;
-	uint8_t out_buf[2];
+	uint8_t out_buf[3];
+    uint8_t command_size;
 	uint8_t *in_buf = NULL;
 	int a, b;
 	
@@ -159,13 +170,21 @@ int lgw_spi_r(void *spi_target, uint8_t address, uint8_t *data) {
 	}
 	CHECK_NULL(data);
 	
-	/* prepare frame to be sent */
-	out_buf[0] = READ_ACCESS | (address & 0x7F);
-	out_buf[1] = 0x00;
+    /* prepare frame to be sent */
+    if (spi_mux_mode == LGW_SPI_MUX_MODE1) {
+        out_buf[0] = spi_mux_target;
+        out_buf[1] = READ_ACCESS | (address & 0x7F);
+        out_buf[2] = 0x00;
+        command_size = 3;
+    } else {
+        out_buf[0] = READ_ACCESS | (address & 0x7F);
+        out_buf[1] = 0x00;
+        command_size = 2;
+    }
 	
 	/* MPSSE transaction */
 	a = Start(mpsse);
-	in_buf = (uint8_t *)Transfer(mpsse, (char *)out_buf, 2);
+	in_buf = (uint8_t *)Transfer(mpsse, (char *)out_buf, command_size);
 	b = Stop(mpsse);
 	
 	/* determine return code */
@@ -188,9 +207,10 @@ int lgw_spi_r(void *spi_target, uint8_t address, uint8_t *data) {
 /* Burst (multiple-byte) write */
 /* transaction time: 3.7ms for 2500 data bytes @6MHz, 1kB chunks */
 /* transaction time: 0.5ms for 16 data bytes @6MHz, 1kB chunks */
-int lgw_spi_wb(void *spi_target, uint8_t address, uint8_t *data, uint16_t size) {
+int lgw_spi_wb(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target, uint8_t address, uint8_t *data, uint16_t size) {
 	struct mpsse_context *mpsse = spi_target;
-	uint8_t command;
+	uint8_t command[2];
+    uint8_t command_size;
 	uint8_t *out_buf = NULL;
 	int size_to_do, buf_size, chunk_size, offset;
 	int a=0, b=0, c=0;
@@ -207,9 +227,16 @@ int lgw_spi_wb(void *spi_target, uint8_t address, uint8_t *data, uint16_t size) 
 		return LGW_SPI_ERROR;
 	}
 	
-	/* prepare command byte */
-	command = WRITE_ACCESS | (address & 0x7F);
-	size_to_do = size + 1; /* add a byte for the address */
+    /* prepare command bytes */
+    if (spi_mux_mode == LGW_SPI_MUX_MODE1) {
+        command[0] = spi_mux_target;
+        command[1] = WRITE_ACCESS | (address & 0x7F);
+        command_size = 2;
+    } else {
+        command[0] = WRITE_ACCESS | (address & 0x7F);
+        command_size = 1;
+    }
+	size_to_do = size + command_size; /* add a byte for the address */
 	
 	/* allocate data buffer */
 	buf_size = (size_to_do < LGW_BURST_CHUNK) ? size_to_do : LGW_BURST_CHUNK;
@@ -224,12 +251,12 @@ int lgw_spi_wb(void *spi_target, uint8_t address, uint8_t *data, uint16_t size) 
 	for (i=0; size_to_do > 0; ++i) {
 		chunk_size = (size_to_do < LGW_BURST_CHUNK) ? size_to_do : LGW_BURST_CHUNK;
 		if (i == 0) {
-			/* first chunk, need to append the address */
-			out_buf[0] = command;
-			memcpy(out_buf+1, data, chunk_size-1);
+			/* first chunk, need to prepend the address */
+			memcpy(out_buf, command, command_size);
+			memcpy(out_buf+command_size, data, chunk_size-command_size);
 		} else {
 			/* following chunks, just copy the data */
-			offset = (i * LGW_BURST_CHUNK) - 1;
+			offset = (i * LGW_BURST_CHUNK) - command_size;
 			memcpy(out_buf, data + offset, chunk_size);
 		}
 		b = FastWrite(mpsse, (char *)out_buf, chunk_size);
@@ -255,9 +282,10 @@ int lgw_spi_wb(void *spi_target, uint8_t address, uint8_t *data, uint16_t size) 
 /* Burst (multiple-byte) read (using FastWrite & FastRead functions) */
 /* transaction time: 7-12ms for 2500 data bytes @6MHz, 1kB chunks */
 /* transaction time: 2ms for 16 data bytes @6MHz, 1kB chunks */
-int lgw_spi_rb(void *spi_target, uint8_t address, uint8_t *data, uint16_t size) {
+int lgw_spi_rb(void *spi_target, uint8_t spi_mux_mode, uint8_t spi_mux_target, uint8_t address, uint8_t *data, uint16_t size) {
 	struct mpsse_context *mpsse = spi_target;
-	uint8_t command;
+	uint8_t command[2];
+    uint8_t command_size;
 	int size_to_do, chunk_size, offset;
 	int a=0, b=0, c=0, d=0;
 	int i;
@@ -273,13 +301,20 @@ int lgw_spi_rb(void *spi_target, uint8_t address, uint8_t *data, uint16_t size) 
 		return LGW_SPI_ERROR;
 	}
 	
-	/* prepare command byte */
-	command = READ_ACCESS | (address & 0x7F);
+	/* prepare command bytes */
+    if (spi_mux_mode == LGW_SPI_MUX_MODE1) {
+        command[0] = spi_mux_target;
+        command[1] = READ_ACCESS | (address & 0x7F);
+        command_size = 2;
+    } else {
+        command[0] = READ_ACCESS | (address & 0x7F);
+        command_size = 1;
+    }
 	size_to_do = size;
 	
 	/* start MPSSE transaction */
 	a = Start(mpsse);
-	b = FastWrite(mpsse, (char *)&command, 1);
+	b = FastWrite(mpsse, (char *)&command, command_size);
 	for (i=0; size_to_do > 0; ++i) {
 		chunk_size = (size_to_do < LGW_BURST_CHUNK) ? size_to_do : LGW_BURST_CHUNK;
 		offset = i * LGW_BURST_CHUNK;
