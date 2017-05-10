@@ -25,7 +25,7 @@ endif
 ### library.cfg configuration file processing
 
 ifeq ($(CFG_SPI),native)
-  CFLAGS      := -O2 -Wall -Wextra -std=c99 -Iinc -I.
+  CFLAGS      := -O2 -Wall -Wextra -std=c99 -Iinc -I. -fPIC
   CFG_SPI_MSG := Linux native SPI driver
   CFG_SPI_OPT := CFG_SPI_NATIVE
 else ifeq ($(CFG_SPI),ftdi)
@@ -36,7 +36,7 @@ else
 	CFLAGS      := -O2 -Wall -Wextra -std=c99 -Iinc -I. -I$(SDKTARGETSYSROOT)/usr/include/libftdi1
 endif
 else
-  CFLAGS      := -O2 -Wall -Wextra -std=c99 -Iinc -I. 
+  CFLAGS      := -O2 -Wall -Wextra -std=c99 -Iinc -I. -fPIC
 endif
   CFG_SPI_MSG := FTDI SPI-over-USB bridge using libmpsse/libftdi/libusb
   CFG_SPI_OPT := CFG_SPI_FTDI
