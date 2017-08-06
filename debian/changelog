@@ -1,0 +1,5 @@
+lora-gateway (4.0.0~git2017.05.10+4e2d9564-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Axel Beckert <abe@debian.org>  Sun, 23 Jul 2017 02:47:20 +0200

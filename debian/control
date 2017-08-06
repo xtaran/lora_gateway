@@ -1,0 +1,15 @@
+Source: lora-gateway
+Section: unknown
+Priority: optional
+Maintainer: Axel Beckert <abe@debian.org>
+Build-Depends: debhelper (>= 10)
+Standards-Version: 4.0.0
+Homepage: https://github.com/TheThingsNetwork/lora_gateway
+#Vcs-Git: https://anonscm.debian.org/collab-maint/lora-gateway.git
+#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/lora-gateway.git
+
+Package: lora-gateway
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
