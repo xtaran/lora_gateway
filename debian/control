@@ -5,7 +5,7 @@ Maintainer: Axel Beckert <abe@debian.org>
 Build-Depends: debhelper (>= 10),
                libftdi-dev,
                libmpsse-dev
-Standards-Version: 4.0.0
+Standards-Version: 4.0.1
 Homepage: https://github.com/TheThingsNetwork/lora_gateway
 #Vcs-Git: https://anonscm.debian.org/collab-maint/lora-gateway.git
 #Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/lora-gateway.git
