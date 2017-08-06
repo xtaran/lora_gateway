@@ -13,5 +13,11 @@ Homepage: https://github.com/TheThingsNetwork/lora_gateway
 Package: lora-gateway
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Description: core software to run a LoRaWAN gateway
+ This package contains the core library, some utility libraries and
+ helper scripts to build a gateway based on a Semtech LoRa
+ multi-channel RF receiver (a.k.a. concentrator).
+ .
+ This package is focussed on running LoRaWAN gateways for the
+ community network TheThingsNetwork and based on TheThingsNetwork's
+ lora_gateway fork.
