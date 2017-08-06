@@ -9,4 +9,4 @@ util_tx_continuous/readme.md	usr/share/doc/lora-gateway/util_tx_continuous/
 util_tx_test/readme.md	        usr/share/doc/lora-gateway/util_tx_test/
 
 # According to https://github.com/ttn-zh/ic880a-gateway/blob/master/install.sh#L131
-libloragw/99-libftdi.rules etc/udev/rules.d/
+libloragw/99-libftdi.rules lib/udev/rules.d/
