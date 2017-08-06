@@ -1,0 +1,8 @@
+version=4
+
+# PGP signature mangle, so foo.tar.gz has foo.tar.gz.sig
+#opts="pgpsigurlmangle=s%$%.sig%"
+
+opts="filenamemangle=s%(?:.*?)?v?(\d[\d.]*)\.tar\.gz%lora_gateway-$1.tar.gz%" \
+   https://github.com/TheThingsNetwork/lora_gateway/releases \
+   (?:.*?/)?v?(\d[\d.]*)\.tar\.gz debian uupdate
