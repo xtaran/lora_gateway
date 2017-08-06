@@ -1,0 +1,34 @@
+Description: Setup/config fixes from TheThingsNetwork Zurich
+Origin: https://github.com/ttn-zh/ic880a-gateway/blob/master/install.sh#L133-L135
+
+--- a/libloragw/99-libftdi.rules
++++ b/libloragw/99-libftdi.rules
+@@ -2,7 +2,7 @@
+ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", MODE="0664", GROUP="plugdev"
+ 
+ # FTDI Devices: FT2232C/D/L, FT2232HL/Q
+-SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", MODE="0664", GROUP="plugdev"
++SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0664", GROUP="plugdev"
+ 
+ # FTDI Devices: FT4232HL/Q
+ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", MODE="0664", GROUP="plugdev"
+--- a/libloragw/library.cfg
++++ b/libloragw/library.cfg
+@@ -10,7 +10,7 @@
+ #               Note: building on the MAC (OSX) is for testing purposes only
+ #                 not for regular operations.
+ 
+-CFG_SPI= native
++CFG_SPI= ftdi
+ 
+ 
+ ### Specify which platform you are on. 
+@@ -20,7 +20,7 @@
+ #  imst_rpi    This is for the IMST concentrators with a Raspberry Pi host.
+ #  linklabs_blowfish_rpi This is for the LinkLabs concentrators with a Raspberry Pi host.
+ 
+-PLATFORM= kerlink
++PLATFORM= lorank
+ 
+ 
+ ### Debug options ###
