@@ -1,0 +1,135 @@
+Description: Fix passing of CFLAGS, CPPFLAGS and LDFLAGS
+Author: Axel Beckert <abe@debian.org>
+
+--- a/util_lbt_test/Makefile
++++ b/util_lbt_test/Makefile
+@@ -17,7 +17,8 @@
+ CC := $(CROSS_COMPILE)gcc
+ AR := $(CROSS_COMPILE)ar
+ 
+-CFLAGS=-O2 -Wall -Wextra -std=c99 -Iinc -I.
++CFLAGS := -O2 -Wall -Wextra -std=c99 -Iinc -I.
++CFLAGS += $(CPPFLAGS) $(LDFLAGS)
+ 
+ OBJDIR = obj
+ 
+@@ -37,6 +38,7 @@
+ else ifeq ($(CFG_SPI),mac)
+   LIBS := -lloragw -lmpsse -lm
+ endif
++LIBS+=$(LDFLAGS)
+ 
+ ### General build targets
+ 
+--- a/util_pkt_logger/Makefile
++++ b/util_pkt_logger/Makefile
+@@ -17,7 +17,8 @@
+ CC := $(CROSS_COMPILE)gcc
+ AR := $(CROSS_COMPILE)ar
+ 
+-CFLAGS=-O2 -Wall -Wextra -std=c99 -Iinc -I.
++CFLAGS := -O2 -Wall -Wextra -std=c99 -Iinc -I.
++CFLAGS += $(CPPFLAGS) $(LDFLAGS)
+ 
+ OBJDIR = obj
+ 
+@@ -36,6 +37,7 @@
+ else ifeq ($(CFG_SPI),mac)  
+   LIBS := -lloragw -lmpsse -lm
+ endif
++LIBS+=$(LDFLAGS)
+ 
+ ### General build targets
+ 
+--- a/util_spi_stress/Makefile
++++ b/util_spi_stress/Makefile
+@@ -18,7 +18,8 @@
+ CC := $(CROSS_COMPILE)gcc
+ AR := $(CROSS_COMPILE)ar
+ 
+-CFLAGS=-O2 -Wall -Wextra -std=c99 -Iinc -I.
++CFLAGS := -O2 -Wall -Wextra -std=c99 -Iinc -I.
++CFLAGS += $(CPPFLAGS) $(LDFLAGS)
+ 
+ OBJDIR = obj
+ 
+@@ -37,6 +38,7 @@
+ else ifeq ($(CFG_SPI),mac)
+   LIBS := -lloragw -lmpsse -lm
+ endif
++LIBS+=$(LDFLAGS)
+ 
+ ### General build targets
+ 
+--- a/util_tx_continuous/Makefile
++++ b/util_tx_continuous/Makefile
+@@ -18,7 +18,8 @@
+ CC := $(CROSS_COMPILE)gcc
+ AR := $(CROSS_COMPILE)ar
+ 
+-CFLAGS=-O2 -Wall -Wextra -std=c99 -Iinc -I.
++CFLAGS := -O2 -Wall -Wextra -std=c99 -Iinc -I.
++CFLAGS += $(CPPFLAGS) $(LDFLAGS)
+ 
+ OBJDIR = obj
+ 
+@@ -39,6 +40,7 @@
+ else ifeq ($(CFG_SPI),mac)
+   LIBS := -lloragw -lmpsse -lm
+ endif
++LIBS+=$(LDFLAGS)
+ 
+ ### General build targets
+ 
+--- a/util_tx_test/Makefile
++++ b/util_tx_test/Makefile
+@@ -18,7 +18,8 @@
+ CC := $(CROSS_COMPILE)gcc
+ AR := $(CROSS_COMPILE)ar
+ 
+-CFLAGS=-O2 -Wall -Wextra -std=c99 -Iinc -I.
++CFLAGS := -O2 -Wall -Wextra -std=c99 -Iinc -I.
++CFLAGS += $(CPPFLAGS) $(LDFLAGS)
+ 
+ OBJDIR = obj
+ 
+@@ -38,6 +39,7 @@
+ else ifeq ($(CFG_SPI),mac)
+   LIBS := -lloragw -lmpsse -lm
+ endif
++LIBS+=$(LDFLAGS)
+ 
+ ### General build targets
+ 
+--- a/libloragw/Makefile
++++ b/libloragw/Makefile
+@@ -61,6 +61,9 @@
+   LIBS := -lloragw -lmpsse -lm
+ endif
+ 
++LIBS+=$(LDFLAGS)
++CFLAGS+=$(CPPFLAGS)
++
+ ### general build targets
+ 
+ all: libloragw.a test_loragw_spi test_loragw_reg test_loragw_hal test_loragw_gps test_loragw_cal
+--- a/util_spectral_scan/Makefile
++++ b/util_spectral_scan/Makefile
+@@ -12,7 +12,8 @@
+ 
+ CC = $(CROSS_COMPILE)gcc
+ AR = $(CROSS_COMPILE)ar
+-CFLAGS = -O2 -Wall -Wextra -std=c99 -I inc
++CFLAGS := -O2 -Wall -Wextra -std=c99 -I inc
++CFLAGS += $(CPPFLAGS) $(LDFLAGS)
+ 
+ OBJDIR = obj
+ INCLUDES = $(wildcard inc/*.h)
+@@ -32,6 +33,7 @@
+ else ifeq ($(CFG_SPI),mac)
+   LIBS := -lloragw -lmpsse -lm
+ endif
++LIBS+=$(LDFLAGS)
+ 
+ ### General build targets
+ 
