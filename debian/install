@@ -10,3 +10,16 @@ util_tx_test/readme.md	        usr/share/doc/lora-gateway/util_tx_test/
 
 # According to https://github.com/ttn-zh/ic880a-gateway/blob/master/install.sh#L131
 libloragw/99-libftdi.rules lib/udev/rules.d/
+
+# The actual binaries
+libloragw/test_loragw_spi		usr/lib/lora-gateway/
+libloragw/test_loragw_reg		usr/lib/lora-gateway/
+libloragw/test_loragw_gps		usr/lib/lora-gateway/
+libloragw/test_loragw_hal		usr/lib/lora-gateway/
+libloragw/test_loragw_cal		usr/lib/lora-gateway/
+util_lbt_test/util_lbt_test		usr/lib/lora-gateway/
+util_pkt_logger/util_pkt_logger		usr/lib/lora-gateway/
+util_spectral_scan/util_spectral_scan	usr/lib/lora-gateway/
+util_spi_stress/util_spi_stress		usr/lib/lora-gateway/
+util_tx_continuous/util_tx_continuous	usr/lib/lora-gateway/
+util_tx_test/util_tx_test		usr/lib/lora-gateway/
