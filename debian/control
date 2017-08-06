@@ -1,5 +1,5 @@
 Source: lora-gateway
-Section: unknown
+Section: net
 Priority: optional
 Maintainer: Axel Beckert <abe@debian.org>
 Build-Depends: debhelper (>= 10),
